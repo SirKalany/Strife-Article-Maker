@@ -24,172 +24,174 @@ type Ammunition = {
 };
 
 export default function AdminForm() {
+  // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
     { label: "Type", value: "" },
     { label: "Manufacturer", value: "" },
+    { label: "Design Period", value: "" },
+    { label: "Manufacturing Period", value: "" },
+    { label: "Service Period", value: "" },
+  ]);
+
+  const [dimensions, setDimensions] = useState<InfoField[]>([
+    { label: "Mass", value: "" },
+    { label: "Crew", value: "" },
+    { label: "Ground Clearance", value: "" },
+    { label: "Ground Pressure", value: "" },
+    { label: "Length", value: "" },
+    { label: "Barrel Overhang", value: "" },
+    { label: "Width", value: "" },
+    { label: "Height", value: "" },
   ]);
 
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [armaments, setArmaments] = useState<Armament[]>([]);
   const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
+  const [protection, setProtection] = useState<InfoField[]>([
+    { label: "Armor", value: "" },
+    { label: "Appliqué Armor", value: "" },
+    { label: "Protection Devices", value: "" },
+  ]);
+  const [automotive, setAutomotive] = useState<InfoField[]>([
+    { label: "Engine", value: "" },
+    { label: "Horsepower", value: "" },
+    { label: "Power/Weight Ratio", value: "" },
+    { label: "Transmission", value: "" },
+    { label: "Gearbox", value: "" },
+    { label: "Suspension", value: "" },
+    { label: "Fuel Type", value: "" },
+    { label: "Fuel Capacity", value: "" },
+  ]);
+  const [performances, setPerformances] = useState<InfoField[]>([
+    { label: "Operational Range", value: "" },
+    { label: "On Road Speed", value: "" },
+    { label: "Cross-Country Speed", value: "" },
+    { label: "Amphibious", value: "" },
+  ]);
 
   // === Handlers ===
-  const handleInfoChange = (idx: number, value: string) => {
-    const copy = [...infos];
+  const handleFieldChange = (setter: any, idx: number, value: string) => {
+    const copy = [...setter];
     copy[idx].value = value;
-    setInfos(copy);
+    setter(copy);
   };
 
-  const addSensor = () => setSensors([...sensors, { Name: "", Type: "", Purpose: "" }]);
-  const removeSensor = (idx: number) => setSensors(sensors.filter((_, i) => i !== idx));
-  const updateSensor = (idx: number, field: keyof Sensor, value: string) => {
-    const copy = [...sensors];
-    copy[idx][field] = value;
-    setSensors(copy);
-  };
+  const renderFields = (fields: InfoField[], setter: any) =>
+    fields.map((field, idx) => (
+      <div key={idx} className="mb-2">
+        <label className="block font-medium">{field.label}</label>
+        <input
+          type="text"
+          value={field.value}
+          onChange={(e) => {
+            const copy = [...fields];
+            copy[idx].value = e.target.value;
+            setter(copy);
+          }}
+          className="border rounded p-1 w-full"
+        />
+      </div>
+    ));
 
-  const addArmament = () =>
-    setArmaments([...armaments, { Category: "", Name: "", Mount: "", Ammunition: "", Stabilizer: "" }]);
-  const removeArmament = (idx: number) => setArmaments(armaments.filter((_, i) => i !== idx));
-  const updateArmament = (idx: number, field: keyof Armament, value: string) => {
-    const copy = [...armaments];
-    copy[idx][field] = value;
-    setArmaments(copy);
-  };
-
-  const addAmmunition = () => setAmmunitions([...ammunitions, { Name: "", Type: "", Velocity: "", Mass: "" }]);
-  const removeAmmunition = (idx: number) => setAmmunitions(ammunitions.filter((_, i) => i !== idx));
-  const updateAmmunition = (idx: number, field: keyof Ammunition, value: string) => {
-    const copy = [...ammunitions];
-    copy[idx][field] = value;
-    setAmmunitions(copy);
-  };
+  const renderList = (
+    list: any[],
+    setter: any,
+    fields: string[],
+    emptyTemplate: any,
+    title: string
+  ) => (
+    <>
+      {list.map((item, idx) => (
+        <div key={idx} className="border rounded p-2 mb-3 relative shadow-sm">
+          {fields.map((field) => (
+            <div key={field} className="mb-1">
+              <label className="block font-medium">{field}</label>
+              <input
+                type="text"
+                value={item[field] || ""}
+                onChange={(e) => {
+                  const copy = [...list];
+                  copy[idx][field] = e.target.value;
+                  setter(copy);
+                }}
+                className="border rounded p-1 w-full"
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setter(list.filter((_, i) => i !== idx))}
+            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => setter([...list, emptyTemplate])}
+        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+      >
+        Add {title.slice(0, -1)}
+      </button>
+    </>
+  );
 
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
+      DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
       SENSORS: sensors,
       ARMAMENT: armaments,
       "AVAILABLE AMMUNITION": ammunitions,
+      PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
+      AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
+      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
   };
 
   return (
-    <div className="p-8 space-y-6">
-      <h1 className="text-2xl font-bold">Admin Form</h1>
+    <div className="p-8 space-y-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-center">Ground Form</h1>
 
-      <section className="space-y-2">
-        <h2 className="font-semibold">Informations</h2>
-        {infos.map((info, idx) => (
-          <div key={idx}>
-            <label className="block text-gray-700">{info.label}</label>
-            <input
-              type="text"
-              value={info.value}
-              onChange={(e) => handleInfoChange(idx, e.target.value)}
-              className="border p-1 w-full"
-            />
-          </div>
-        ))}
+      {/* Blocks */}
+      <section className="border rounded p-4 bg-gray-800">{renderFields(infos, setInfos)}</section>
+      <section className="border rounded p-4 bg-gray-800">{renderFields(dimensions, setDimensions)}</section>
+      <section className="border rounded p-4 bg-gray-800">{renderList(sensors, setSensors, ["Name", "Type", "Purpose"], { Name: "", Type: "", Purpose: "" }, "Sensors")}</section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderList(
+          armaments,
+          setArmaments,
+          ["Category", "Name", "Mount", "Ammunition", "Vertical Guidance", "Horizontal Guidance", "Stabilizer"],
+          { Category: "", Name: "", Mount: "", Ammunition: "", "Vertical Guidance": "", "Horizontal Guidance": "", Stabilizer: "" },
+          "Armaments"
+        )}
       </section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderList(
+          ammunitions,
+          setAmmunitions,
+          ["Name", "Type", "Velocity", "Penetration", "Mass", "Explosive Mass", "TNT Equivalent"],
+          { Name: "", Type: "", Velocity: "", Penetration: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "" },
+          "Ammunition"
+        )}
+      </section>
+      <section className="border rounded p-4 bg-gray-800">{renderFields(protection, setProtection)}</section>
+      <section className="border rounded p-4 bg-gray-800">{renderFields(automotive, setAutomotive)}</section>
+      <section className="border rounded p-4 bg-gray-800">{renderFields(performances, setPerformances)}</section>
 
-      <section className="space-y-2">
-        <h2 className="font-semibold">Sensors</h2>
-        {sensors.map((sensor, idx) => (
-          <div key={idx} className="border p-2 space-y-1 relative">
-            {(["Name", "Type", "Purpose"] as (keyof Sensor)[]).map((field) => (
-              <div key={field}>
-                <label>{field}</label>
-                <input
-                  type="text"
-                  value={sensor[field]}
-                  onChange={(e) => updateSensor(idx, field, e.target.value)}
-                  className="border p-1 w-full"
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => removeSensor(idx)}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button type="button" onClick={addSensor} className="bg-green-500 text-white px-3 py-1 rounded">
-          Add Sensor
+      <div className="text-center mt-6">
+        <button
+          type="button"
+          onClick={exportJSON}
+          className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
+        >
+          Export JSON
         </button>
-      </section>
-
-      <section className="space-y-2">
-        <h2 className="font-semibold">Armaments</h2>
-        {armaments.map((arm, idx) => (
-          <div key={idx} className="border p-2 space-y-1 relative">
-            {(["Category", "Name", "Mount", "Ammunition", "Vertical Guidance", "Horizontal Guidance", "Stabilizer"] as (keyof Armament)[]).map(
-              (field) => (
-                <div key={field}>
-                  <label>{field}</label>
-                  <input
-                    type="text"
-                    value={arm[field] || ""}
-                    onChange={(e) => updateArmament(idx, field, e.target.value)}
-                    className="border p-1 w-full"
-                  />
-                </div>
-              )
-            )}
-            <button
-              type="button"
-              onClick={() => removeArmament(idx)}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button type="button" onClick={addArmament} className="bg-green-500 text-white px-3 py-1 rounded">
-          Add Armament
-        </button>
-      </section>
-
-      <section className="space-y-2">
-        <h2 className="font-semibold">Ammunition</h2>
-        {ammunitions.map((ammo, idx) => (
-          <div key={idx} className="border p-2 space-y-1 relative">
-            {(["Name", "Type", "Velocity", "Penetration", "Mass", "Explosive Mass", "TNT Equivalent"] as (keyof Ammunition)[]).map(
-              (field) => (
-                <div key={field}>
-                  <label>{field}</label>
-                  <input
-                    type="text"
-                    value={ammo[field] || ""}
-                    onChange={(e) => updateAmmunition(idx, field, e.target.value)}
-                    className="border p-1 w-full"
-                  />
-                </div>
-              )
-            )}
-            <button
-              type="button"
-              onClick={() => removeAmmunition(idx)}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button type="button" onClick={addAmmunition} className="bg-green-500 text-white px-3 py-1 rounded">
-          Add Ammunition
-        </button>
-      </section>
-
-      <button type="button" onClick={exportJSON} className="bg-blue-600 text-white px-4 py-2 rounded mt-4">
-        Export JSON
-      </button>
+      </div>
     </div>
   );
 }
