@@ -147,7 +147,9 @@ export default function AdminForm() {
       "AVAILABLE AMMUNITION": ammunitions,
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
-      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
+      PERFORMANCES: Object.fromEntries(
+        performances.map((i) => [i.label, i.value])
+      ),
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
@@ -158,15 +160,43 @@ export default function AdminForm() {
       <h1 className="text-3xl font-bold mb-6 text-center">Ground Form</h1>
 
       {/* Blocks */}
-      <section className="border rounded p-4 bg-gray-800">{renderFields(infos, setInfos)}</section>
-      <section className="border rounded p-4 bg-gray-800">{renderFields(dimensions, setDimensions)}</section>
-      <section className="border rounded p-4 bg-gray-800">{renderList(sensors, setSensors, ["Name", "Type", "Purpose"], { Name: "", Type: "", Purpose: "" }, "Sensors")}</section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderFields(infos, setInfos)}
+      </section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderFields(dimensions, setDimensions)}
+      </section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderList(
+          sensors,
+          setSensors,
+          ["Name", "Type", "Purpose"],
+          { Name: "", Type: "", Purpose: "" },
+          "Sensors"
+        )}
+      </section>
       <section className="border rounded p-4 bg-gray-800">
         {renderList(
           armaments,
           setArmaments,
-          ["Category", "Name", "Mount", "Ammunition", "Vertical Guidance", "Horizontal Guidance", "Stabilizer"],
-          { Category: "", Name: "", Mount: "", Ammunition: "", "Vertical Guidance": "", "Horizontal Guidance": "", Stabilizer: "" },
+          [
+            "Category",
+            "Name",
+            "Mount",
+            "Ammunition",
+            "Vertical Guidance",
+            "Horizontal Guidance",
+            "Stabilizer",
+          ],
+          {
+            Category: "",
+            Name: "",
+            Mount: "",
+            Ammunition: "",
+            "Vertical Guidance": "",
+            "Horizontal Guidance": "",
+            Stabilizer: "",
+          },
           "Armaments"
         )}
       </section>
@@ -174,14 +204,36 @@ export default function AdminForm() {
         {renderList(
           ammunitions,
           setAmmunitions,
-          ["Name", "Type", "Velocity", "Penetration", "Mass", "Explosive Mass", "TNT Equivalent"],
-          { Name: "", Type: "", Velocity: "", Penetration: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "" },
+          [
+            "Name",
+            "Type",
+            "Velocity",
+            "Penetration",
+            "Mass",
+            "Explosive Mass",
+            "TNT Equivalent",
+          ],
+          {
+            Name: "",
+            Type: "",
+            Velocity: "",
+            Penetration: "",
+            Mass: "",
+            "Explosive Mass": "",
+            "TNT Equivalent": "",
+          },
           "Ammunition"
         )}
       </section>
-      <section className="border rounded p-4 bg-gray-800">{renderFields(protection, setProtection)}</section>
-      <section className="border rounded p-4 bg-gray-800">{renderFields(automotive, setAutomotive)}</section>
-      <section className="border rounded p-4 bg-gray-800">{renderFields(performances, setPerformances)}</section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderFields(protection, setProtection)}
+      </section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderFields(automotive, setAutomotive)}
+      </section>
+      <section className="border rounded p-4 bg-gray-800">
+        {renderFields(performances, setPerformances)}
+      </section>
 
       <div className="text-center mt-6">
         <button
