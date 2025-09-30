@@ -17,42 +17,42 @@ type Ammunition = {
 export default function HeavyForm() {
   // === Fixed blocks ===
   const [infos, setInfos] = useState<InfoField[]>([
-    { label: "Name", value: "MT-12" },
-    { label: "Type", value: "Anti-tank gun" },
-    { label: "Manufacturer", value: "Yurga Machine-Building Plant" },
-    { label: "Design Period", value: "1970" },
-    { label: "Manufacturing Period", value: "1970 - Today" },
-    { label: "Service Period", value: "1970 - Present" },
+    { label: "Name", value: "" },
+    { label: "Type", value: "" },
+    { label: "Manufacturer", value: "" },
+    { label: "Design Period", value: "" },
+    { label: "Manufacturing Period", value: "" },
+    { label: "Service Period", value: "" },
   ]);
 
   const [dimensions, setDimensions] = useState<InfoField[]>([
-    { label: "Length", value: "9,65 m" },
-    { label: "Barrel Length", value: "6.3 m" },
-    { label: "Calibre", value: "100 x 910 mmR" },
-    { label: "Width", value: "2,32 m" },
-    { label: "Height", value: "1,6 m" },
-    { label: "Mass", value: "3,72 kg" },
-    { label: "Crew", value: "7" },
+    { label: "Length", value: "" },
+    { label: "Barrel Length", value: "" },
+    { label: "Calibre", value: "" },
+    { label: "Width", value: "" },
+    { label: "Height", value: "" },
+    { label: "Mass", value: "" },
+    { label: "Crew", value: "" },
   ]);
 
   const [performances, setPerformances] = useState<InfoField[]>([
-    { label: "Elevation", value: "-6° to +20°" },
-    { label: "Traverse", value: "27° left and right" },
-    { label: "Rate of Fire", value: "6-14 rpm" },
-    { label: "Muzzle Velocity", value: "700 - 1,575 m/s" },
-    { label: "Maximum Range", value: "3,000 m Direct, 8,2000 Indirect" },
+    { label: "Elevation", value: "" },
+    { label: "Traverse", value: "" },
+    { label: "Rate of Fire", value: "" },
+    { label: "Muzzle Velocity", value: "" },
+    { label: "Maximum Range", value: "" },
   ]);
 
   // === Modular block ===
   const [ammunitions, setAmmunitions] = useState<Ammunition[]>([
     {
-      Name: "3BM-2",
-      Type: "APFSDS-T Tungsten",
-      Velocity: "1,575 m/s",
-      Penetration: "230 mm at 500 m",
-      Mass: "19.34 kg",
-      "Explosive Mass": "N/A",
-      "TNT Equivalent": "N/A",
+      Name: "",
+      Type: "",
+      Velocity: "",
+      Penetration: "",
+      Mass: "",
+      "Explosive Mass": "",
+      "TNT Equivalent": "",
     },
   ]);
 

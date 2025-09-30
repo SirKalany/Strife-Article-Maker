@@ -5,15 +5,19 @@ import React, { useState } from "react";
 type InfoField = { label: string; value: string };
 
 type Sensor = { Name: string; Type: string; Role: string };
-type Armament = { Category: string; Name: string; Ammunition: string };
+type Armament = {
+  Category: string;
+  Name: string;
+  Ammunition: string;
+};
 type Ammunition = {
   Name: string;
   Type: string;
-  Velocity: string;
-  Penetration: string;
-  Mass: string;
-  "Explosive Mass": string;
-  "TNT Equivalent": string;
+  Velocity?: string;
+  Penetration?: string;
+  Mass?: string;
+  "Explosive Mass"?: string;
+  "TNT Equivalent"?: string;
 };
 
 export default function NavalForm() {
@@ -63,8 +67,8 @@ export default function NavalForm() {
 
   // === Modular blocks ===
   const [sensors, setSensors] = useState<Sensor[]>([]);
-  const [armament, setArmament] = useState<Armament[]>([]);
-  const [ammunition, setAmmunition] = useState<Ammunition[]>([]);
+  const [armaments, setArmaments] = useState<Armament[]>([]);
+  const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
 
   // === Helpers ===
   const renderFields = (fields: InfoField[], setter: any) =>
@@ -93,7 +97,10 @@ export default function NavalForm() {
   ) => (
     <>
       {list.map((item, idx) => (
-        <div key={idx} className="border rounded p-2 mb-3 relative shadow-sm">
+        <div
+          key={idx}
+          className="border rounded p-2 mb-3 relative shadow-sm bg-gray-700"
+        >
           {fields.map((field) => (
             <div key={field} className="mb-1">
               <label className="block font-medium">{field}</label>
@@ -133,8 +140,8 @@ export default function NavalForm() {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
       "SENSORS & SYSTEMS": sensors,
-      ARMAMENT: armament,
-      "AVAILABLE AMMUNITION": ammunition,
+      ARMAMENT: armaments,
+      "AVAILABLE AMMUNITION": ammunitions,
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
       "AIRCRAFT CARRIED": Object.fromEntries(
@@ -177,10 +184,10 @@ export default function NavalForm() {
       </section>
 
       <section className="border rounded p-4 bg-gray-800">
-        <h2 className="text-lg font-semibold mb-2">Armament</h2>
+        <h2 className="text-lg font-semibold mb-2">Armaments</h2>
         {renderList(
-          armament,
-          setArmament,
+          armaments,
+          setArmaments,
           ["Category", "Name", "Ammunition"],
           { Category: "", Name: "", Ammunition: "" },
           "Armaments"
@@ -190,8 +197,8 @@ export default function NavalForm() {
       <section className="border rounded p-4 bg-gray-800">
         <h2 className="text-lg font-semibold mb-2">Available Ammunition</h2>
         {renderList(
-          ammunition,
-          setAmmunition,
+          ammunitions,
+          setAmmunitions,
           [
             "Name",
             "Type",

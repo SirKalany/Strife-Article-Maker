@@ -3,15 +3,9 @@
 import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
-
-type Attachment = {
-  Name: string;
-  Type: string;
-  Description: string;
-};
+type Attachment = { Name: string; Type: string; Description: string };
 
 export default function InfantryForm() {
-  // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
     { label: "Type", value: "" },
@@ -27,7 +21,7 @@ export default function InfantryForm() {
     { label: "Barrel Length", value: "" },
   ]);
 
-  const [protection, setProtection] = useState<InfoField[]>([
+  const [mechanics, setMechanics] = useState<InfoField[]>([
     { label: "Action", value: "" },
     { label: "Feed System", value: "" },
   ]);
@@ -42,64 +36,71 @@ export default function InfantryForm() {
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);
 
-  // === Helpers ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
-        <label className="block font-medium">{field.label}</label>
+        <label className="block font-medium text-sm text-gray-200">{field.label}</label>
         <input
           type="text"
           value={field.value}
           onChange={(e) => {
             const copy = [...fields];
-            copy[idx].value = e.target.value;
+            copy[idx] = { ...copy[idx], value: e.target.value };
             setter(copy);
           }}
-          className="border rounded p-1 w-full"
+          className="border rounded p-2 w-full bg-gray-900 text-gray-100 border-gray-700"
         />
       </div>
     ));
 
   const renderList = (
-    list: any[],
-    setter: any,
-    fields: string[],
-    emptyTemplate: any,
-    title: string
+    list: Attachment[],
+    setter: React.Dispatch<React.SetStateAction<Attachment[]>>,
   ) => (
     <>
       {list.map((item, idx) => (
-        <div key={idx} className="border rounded p-2 mb-3 relative shadow-sm">
-          {fields.map((field) => (
-            <div key={field} className="mb-1">
-              <label className="block font-medium">{field}</label>
-              <input
-                type="text"
-                value={item[field] || ""}
-                onChange={(e) => {
-                  const copy = [...list];
-                  copy[idx][field] = e.target.value;
-                  setter(copy);
-                }}
-                className="border rounded p-1 w-full"
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setter(list.filter((_, i) => i !== idx))}
-            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-          >
-            Remove
-          </button>
+        <div key={idx} className="border rounded p-3 mb-3 relative bg-gray-900 border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-semibold text-gray-200">{item.Name || `Attachment ${idx + 1}`}</div>
+            <button
+              type="button"
+              onClick={() => setter(list.filter((_, i) => i !== idx))}
+              className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+            >
+              Remove
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {["Name", "Type", "Description"].map((field) => (
+              <div key={field}>
+                <label className="block text-xs text-gray-300">{field}</label>
+                <input
+                  type="text"
+                  value={item[field as keyof Attachment] || ""}
+                  onChange={(e) => {
+                    const copy = [...list];
+                    copy[idx] = { ...copy[idx], [field]: e.target.value };
+                    setter(copy);
+                  }}
+                  className="border rounded p-1 w-full bg-gray-800 text-gray-100 border-gray-700"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       ))}
+
       <button
         type="button"
-        onClick={() => setter([...list, emptyTemplate])}
-        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+        onClick={() =>
+          setter([
+            ...list,
+            { Name: "", Type: "", Description: "" },
+          ])
+        }
+        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
       >
-        Add {title.slice(0, -1)}
+        Add Attachment
       </button>
     </>
   );
@@ -108,49 +109,41 @@ export default function InfantryForm() {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
-      PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
-      PERFORMANCES: Object.fromEntries(
-        performances.map((i) => [i.label, i.value])
-      ),
+      MECHANICS: Object.fromEntries(mechanics.map((i) => [i.label, i.value])),
+      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
       ATTACHMENTS: attachments,
     };
     console.log(JSON.stringify(json, null, 2));
-    alert("Check console for JSON output!");
+    alert("JSON printed to console (and copied to clipboard when possible).");
   };
 
   return (
-    <div className="p-8 space-y-6 max-w-4xl mx-auto">
+    <div className="p-8 space-y-6 max-w-4xl mx-auto text-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Infantry Form</h1>
 
-      <section className="border rounded p-4 bg-gray-800">
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Informations</h2>
         {renderFields(infos, setInfos)}
       </section>
 
-      <section className="border rounded p-4 bg-gray-800">
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Dimensions</h2>
         {renderFields(dimensions, setDimensions)}
       </section>
 
-      <section className="border rounded p-4 bg-gray-800">
-        <h2 className="text-lg font-semibold mb-2">Protection</h2>
-        {renderFields(protection, setProtection)}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2">Mechanics</h2>
+        {renderFields(mechanics, setMechanics)}
       </section>
 
-      <section className="border rounded p-4 bg-gray-800">
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
       </section>
 
-      <section className="border rounded p-4 bg-gray-800">
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Attachments</h2>
-        {renderList(
-          attachments,
-          setAttachments,
-          ["Name", "Type", "Description"],
-          { Name: "", Type: "", Description: "" },
-          "Attachments"
-        )}
+        {renderList(attachments, setAttachments)}
       </section>
 
       <div className="text-center mt-6">
