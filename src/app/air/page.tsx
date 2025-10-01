@@ -4,14 +4,12 @@ import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
 
-type Armament = {
+type InternalArmament = {
   Name: string;
   Ammunition?: string;
-  Role?: string;
-  Guidance?: string;
-  Loadout?: string;
   RateOfFire?: string;
-  Pods?: string;
+  EffectiveRange?: string;
+  FeedSystem?: string;
 };
 
 type Ammunition = {
@@ -22,13 +20,21 @@ type Ammunition = {
   Mass?: string;
   "Explosive Mass"?: string;
   "TNT Equivalent"?: string;
-  Warhead?: string;
+};
+
+type HardpointAmmo = {
+  Name: string;
+  Type: string;
+  Mass?: string;
+  "Explosive Mass"?: string;
+  "TNT Equivalent"?: string;
+  "Effective Range"?: string;
 };
 
 type Avionic = {
   Name: string;
   Type: string;
-  Functions: string;
+  Functions?: string;
   Range?: string;
 };
 
@@ -44,22 +50,27 @@ export default function AirForm() {
   ]);
 
   const [dimensions, setDimensions] = useState<InfoField[]>([
+    { label: "Mass", value: "" },
+    { label: "Crew", value: "" },
     { label: "Length", value: "" },
     { label: "Wingspan", value: "" },
     { label: "Wing Area", value: "" },
     { label: "Height", value: "" },
-    { label: "Crew", value: "" },
     { label: "Empty Weight", value: "" },
     { label: "Loaded Weight", value: "" },
+    { label: "Hardpoints", value: "" },
     { label: "Max Takeoff Weight", value: "" },
   ]);
 
-  const [armaments, setArmaments] = useState<Armament[]>([]);
-  const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
+  const [internalArmaments, setInternalArmaments] = useState<InternalArmament[]>([]);
+  const [internalAmmunitions, setInternalAmmunitions] = useState<Ammunition[]>([]);
+  const [hardpointAmmunitions, setHardpointAmmunitions] = useState<HardpointAmmo[]>([]);
+
   const [protection, setProtection] = useState<InfoField[]>([
     { label: "Armor", value: "" },
     { label: "Countermeasures", value: "" },
   ]);
+
   const [automotive, setAutomotive] = useState<InfoField[]>([
     { label: "Powerplant", value: "" },
     { label: "Thrust", value: "" },
@@ -67,6 +78,7 @@ export default function AirForm() {
     { label: "Fuel Type", value: "" },
     { label: "Fuel Capacity", value: "" },
   ]);
+
   const [avionics, setAvionics] = useState<Avionic[]>([]);
   const [performances, setPerformances] = useState<InfoField[]>([
     { label: "Combat Range", value: "" },
@@ -161,14 +173,13 @@ export default function AirForm() {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
-      ARMAMENT: armaments,
-      "AVAILABLE AMMUNITION": ammunitions,
+      "INTERNAL ARMAMENT": internalArmaments,
+      "AVAILABLE INTERNAL AMMUNITION": internalAmmunitions,
+      "AVAILABLE HARDPOINTS AMMUNITION": hardpointAmmunitions,
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
       AVIONICS: avionics,
-      PERFORMANCES: Object.fromEntries(
-        performances.map((i) => [i.label, i.value])
-      ),
+      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
@@ -189,58 +200,35 @@ export default function AirForm() {
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Armaments</h2>
+        <h2 className="text-lg font-semibold mb-2">Internal Armament</h2>
         {renderList(
-          armaments,
-          setArmaments,
-          [
-            "Name",
-            "Ammunition",
-            "Role",
-            "Guidance",
-            "Loadout",
-            "Rate Of Fire",
-            "Pods",
-          ],
-          {
-            Name: "",
-            Ammunition: "",
-            Role: "",
-            Guidance: "",
-            Loadout: "",
-            "Rate Of Fire": "",
-            Pods: "",
-          },
-          "Armaments"
+          internalArmaments,
+          setInternalArmaments,
+          ["Name", "Ammunition", "Rate Of Fire", "Effective Range", "Feed System"],
+          { Name: "", Ammunition: "", "Rate Of Fire": "", "Effective Range": "", "Feed System": "" },
+          "Internal Armaments"
         )}
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Ammunition</h2>
+        <h2 className="text-lg font-semibold mb-2">Available Internal Ammunition</h2>
         {renderList(
-          ammunitions,
-          setAmmunitions,
-          [
-            "Name",
-            "Type",
-            "Velocity",
-            "Penetration",
-            "Mass",
-            "Explosive Mass",
-            "TNT Equivalent",
-            "Warhead",
-          ],
-          {
-            Name: "",
-            Type: "",
-            Velocity: "",
-            Penetration: "",
-            Mass: "",
-            "Explosive Mass": "",
-            "TNT Equivalent": "",
-            Warhead: "",
-          },
-          "Ammunitions"
+          internalAmmunitions,
+          setInternalAmmunitions,
+          ["Name", "Type", "Velocity", "Penetration", "Mass", "Explosive Mass", "TNT Equivalent"],
+          { Name: "", Type: "", Velocity: "", Penetration: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "" },
+          "Internal Ammunitions"
+        )}
+      </section>
+
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2">Available Hardpoints Ammunition</h2>
+        {renderList(
+          hardpointAmmunitions,
+          setHardpointAmmunitions,
+          ["Name", "Type", "Mass", "Explosive Mass", "TNT Equivalent", "Effective Range"],
+          { Name: "", Type: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "", "Effective Range": "" },
+          "Hardpoints Ammunitions"
         )}
       </section>
 
