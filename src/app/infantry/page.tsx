@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
-type Attachment = { Name: string; Type: string; Description: string };
 
 export default function InfantryForm() {
   const [infos, setInfos] = useState<InfoField[]>([
@@ -33,8 +32,6 @@ export default function InfantryForm() {
     { label: "Firing Range", value: "" },
   ]);
 
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
@@ -54,60 +51,6 @@ export default function InfantryForm() {
       </div>
     ));
 
-  const renderList = (
-    list: Attachment[],
-    setter: React.Dispatch<React.SetStateAction<Attachment[]>>
-  ) => (
-    <>
-      {list.map((item, idx) => (
-        <div
-          key={idx}
-          className="border rounded p-3 mb-3 relative bg-gray-900 border-gray-700"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-semibold text-gray-200">
-              {item.Name || `Attachment ${idx + 1}`}
-            </div>
-            <button
-              type="button"
-              onClick={() => setter(list.filter((_, i) => i !== idx))}
-              className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-            >
-              Remove
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {["Name", "Type", "Description"].map((field) => (
-              <div key={field}>
-                <label className="block text-xs text-gray-300">{field}</label>
-                <input
-                  type="text"
-                  value={item[field as keyof Attachment] || ""}
-                  onChange={(e) => {
-                    const copy = [...list];
-                    copy[idx] = { ...copy[idx], [field]: e.target.value };
-                    setter(copy);
-                  }}
-                  className="border rounded p-1 w-full bg-gray-800 text-gray-100 border-gray-700"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-
-      <button
-        type="button"
-        onClick={() =>
-          setter([...list, { Name: "", Type: "", Description: "" }])
-        }
-        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
-      >
-        Add Attachment
-      </button>
-    </>
-  );
-
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
@@ -116,7 +59,6 @@ export default function InfantryForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
-      ATTACHMENTS: attachments,
     };
     console.log(JSON.stringify(json, null, 2));
     alert("JSON printed to console (and copied to clipboard when possible).");
@@ -144,11 +86,6 @@ export default function InfantryForm() {
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Attachments</h2>
-        {renderList(attachments, setAttachments)}
       </section>
 
       <div className="text-center mt-6">
