@@ -6,18 +6,14 @@ type InfoField = { label: string; value: string };
 
 type Sensor = { Name: string; Type: string; Role: string };
 type Armament = {
-  Category: string;
   Name: string;
+  Category: string;
   Ammunition: string;
 };
 type Ammunition = {
   Name: string;
   Type: string;
-  Velocity?: string;
-  Penetration?: string;
-  Mass?: string;
-  "Explosive Mass"?: string;
-  "TNT Equivalent"?: string;
+  Caliber?: string;
 };
 
 export default function NavalForm() {
@@ -188,8 +184,8 @@ export default function NavalForm() {
         {renderList(
           armaments,
           setArmaments,
-          ["Category", "Name", "Ammunition"],
-          { Category: "", Name: "", Ammunition: "" },
+          ["Name", "Category", "Ammunition"],
+          { Name: "", Category: "", Ammunition: "" },
           "Armaments"
         )}
       </section>
@@ -202,20 +198,12 @@ export default function NavalForm() {
           [
             "Name",
             "Type",
-            "Velocity",
-            "Penetration",
-            "Mass",
-            "Explosive Mass",
-            "TNT Equivalent",
+            "Caliber",
           ],
           {
             Name: "",
             Type: "",
-            Velocity: "",
-            Penetration: "",
-            Mass: "",
-            "Explosive Mass": "",
-            "TNT Equivalent": "",
+            Caliber: "",
           },
           "Ammunitions"
         )}

@@ -30,8 +30,7 @@ export default function InfantryForm() {
     { label: "Calibre", value: "" },
     { label: "Rate of Fire", value: "" },
     { label: "Muzzle Velocity", value: "" },
-    { label: "Effective Range", value: "" },
-    { label: "Maximum Range", value: "" },
+    { label: "Firing Range", value: "" },
   ]);
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -39,7 +38,9 @@ export default function InfantryForm() {
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
-        <label className="block font-medium text-sm text-gray-200">{field.label}</label>
+        <label className="block font-medium text-sm text-gray-200">
+          {field.label}
+        </label>
         <input
           type="text"
           value={field.value}
@@ -55,13 +56,18 @@ export default function InfantryForm() {
 
   const renderList = (
     list: Attachment[],
-    setter: React.Dispatch<React.SetStateAction<Attachment[]>>,
+    setter: React.Dispatch<React.SetStateAction<Attachment[]>>
   ) => (
     <>
       {list.map((item, idx) => (
-        <div key={idx} className="border rounded p-3 mb-3 relative bg-gray-900 border-gray-700">
+        <div
+          key={idx}
+          className="border rounded p-3 mb-3 relative bg-gray-900 border-gray-700"
+        >
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-semibold text-gray-200">{item.Name || `Attachment ${idx + 1}`}</div>
+            <div className="text-sm font-semibold text-gray-200">
+              {item.Name || `Attachment ${idx + 1}`}
+            </div>
             <button
               type="button"
               onClick={() => setter(list.filter((_, i) => i !== idx))}
@@ -93,10 +99,7 @@ export default function InfantryForm() {
       <button
         type="button"
         onClick={() =>
-          setter([
-            ...list,
-            { Name: "", Type: "", Description: "" },
-          ])
+          setter([...list, { Name: "", Type: "", Description: "" }])
         }
         className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
       >
@@ -110,7 +113,9 @@ export default function InfantryForm() {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
       MECHANICS: Object.fromEntries(mechanics.map((i) => [i.label, i.value])),
-      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
+      PERFORMANCES: Object.fromEntries(
+        performances.map((i) => [i.label, i.value])
+      ),
       ATTACHMENTS: attachments,
     };
     console.log(JSON.stringify(json, null, 2));

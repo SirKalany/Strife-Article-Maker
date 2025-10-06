@@ -15,27 +15,19 @@ type InternalArmament = {
 type Ammunition = {
   Name: string;
   Type: string;
-  Velocity?: string;
-  Penetration?: string;
-  Mass?: string;
-  "Explosive Mass"?: string;
-  "TNT Equivalent"?: string;
+  Caliber?: string;
 };
 
 type HardpointAmmo = {
   Name: string;
   Type: string;
   Mass?: string;
-  "Explosive Mass"?: string;
-  "TNT Equivalent"?: string;
-  "Effective Range"?: string;
 };
 
 type Avionic = {
   Name: string;
   Type: string;
   Functions?: string;
-  Range?: string;
 };
 
 export default function AirForm() {
@@ -62,9 +54,15 @@ export default function AirForm() {
     { label: "Max Takeoff Weight", value: "" },
   ]);
 
-  const [internalArmaments, setInternalArmaments] = useState<InternalArmament[]>([]);
-  const [internalAmmunitions, setInternalAmmunitions] = useState<Ammunition[]>([]);
-  const [hardpointAmmunitions, setHardpointAmmunitions] = useState<HardpointAmmo[]>([]);
+  const [internalArmaments, setInternalArmaments] = useState<
+    InternalArmament[]
+  >([]);
+  const [internalAmmunitions, setInternalAmmunitions] = useState<Ammunition[]>(
+    []
+  );
+  const [hardpointAmmunitions, setHardpointAmmunitions] = useState<
+    HardpointAmmo[]
+  >([]);
 
   const [protection, setProtection] = useState<InfoField[]>([
     { label: "Armor", value: "" },
@@ -74,7 +72,6 @@ export default function AirForm() {
   const [automotive, setAutomotive] = useState<InfoField[]>([
     { label: "Powerplant", value: "" },
     { label: "Thrust", value: "" },
-    { label: "Thrust w/Afterburner", value: "" },
     { label: "Fuel Type", value: "" },
     { label: "Fuel Capacity", value: "" },
   ]);
@@ -179,7 +176,9 @@ export default function AirForm() {
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
       AVIONICS: avionics,
-      PERFORMANCES: Object.fromEntries(performances.map((i) => [i.label, i.value])),
+      PERFORMANCES: Object.fromEntries(
+        performances.map((i) => [i.label, i.value])
+      ),
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
@@ -204,30 +203,54 @@ export default function AirForm() {
         {renderList(
           internalArmaments,
           setInternalArmaments,
-          ["Name", "Ammunition", "Rate Of Fire", "Effective Range", "Feed System"],
-          { Name: "", Ammunition: "", "Rate Of Fire": "", "Effective Range": "", "Feed System": "" },
+          [
+            "Name",
+            "Ammunition",
+            "Rate Of Fire",
+            "Effective Range",
+            "Feed System",
+          ],
+          {
+            Name: "",
+            Ammunition: "",
+            "Rate Of Fire": "",
+            "Effective Range": "",
+            "Feed System": "",
+          },
           "Internal Armaments"
         )}
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Internal Ammunition</h2>
+        <h2 className="text-lg font-semibold mb-2">
+          Available Internal Ammunition
+        </h2>
         {renderList(
           internalAmmunitions,
           setInternalAmmunitions,
-          ["Name", "Type", "Velocity", "Penetration", "Mass", "Explosive Mass", "TNT Equivalent"],
-          { Name: "", Type: "", Velocity: "", Penetration: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "" },
+          ["Name", "Type", "Caliber"],
+          {
+            Name: "",
+            Type: "",
+            Caliber: "",
+          },
           "Internal Ammunitions"
         )}
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Hardpoints Ammunition</h2>
+        <h2 className="text-lg font-semibold mb-2">
+          Available Hardpoints Ammunition
+        </h2>
         {renderList(
           hardpointAmmunitions,
           setHardpointAmmunitions,
-          ["Name", "Type", "Mass", "Explosive Mass", "TNT Equivalent", "Effective Range"],
-          { Name: "", Type: "", Mass: "", "Explosive Mass": "", "TNT Equivalent": "", "Effective Range": "" },
+          ["Name", "Type", "Mass"],
+          {
+            Name: "",
+            Type: "",
+            Mass: "",
+          },
           "Hardpoints Ammunitions"
         )}
       </section>
@@ -247,8 +270,8 @@ export default function AirForm() {
         {renderList(
           avionics,
           setAvionics,
-          ["Name", "Type", "Functions", "Range"],
-          { Name: "", Type: "", Functions: "", Range: "" },
+          ["Name", "Type", "Functions"],
+          { Name: "", Type: "", Functions: ""},
           "Avionics"
         )}
       </section>

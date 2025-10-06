@@ -5,22 +5,18 @@ import React, { useState } from "react";
 type InfoField = { label: string; value: string };
 type Sensor = { Name: string; Type: string; Purpose: string };
 type Armament = {
-  Category: string;
   Name: string;
+  Catagory: string;
   Mount?: string;
   Ammunition: string;
+  "Rate of Fire": string;
   "Vertical Guidance"?: string;
   "Horizontal Guidance"?: string;
-  Stabilizer?: string;
 };
 type Ammunition = {
   Name: string;
   Type: string;
-  Velocity: string;
-  Penetration?: string;
-  Mass: string;
-  "Explosive Mass"?: string;
-  "TNT Equivalent"?: string;
+  Caliber: string;
 };
 
 export default function AdminForm() {
@@ -51,7 +47,8 @@ export default function AdminForm() {
   const [protection, setProtection] = useState<InfoField[]>([
     { label: "Armor", value: "" },
     { label: "Appliqué Armor", value: "" },
-    { label: "Protection Devices", value: "" },
+    { label: "Passive Protection Devices", value: "" },
+    { label: "Active Protection Devices", value: "" },
   ]);
   const [automotive, setAutomotive] = useState<InfoField[]>([
     { label: "Engine", value: "" },
@@ -183,7 +180,7 @@ export default function AdminForm() {
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Sensors</h2>
+        <h2 className="text-lg font-semibold mb-2">Sensors & Electronics</h2>
         {renderList(
           sensors,
           setSensors,
@@ -199,22 +196,22 @@ export default function AdminForm() {
           armaments,
           setArmaments,
           [
-            "Category",
             "Name",
+            "Category",
             "Mount",
             "Ammunition",
+            "Rate of Fire",
             "Vertical Guidance",
             "Horizontal Guidance",
-            "Stabilizer",
           ],
           {
-            Category: "",
             Name: "",
+            Category: "",
             Mount: "",
             Ammunition: "",
+            "Rate of Fire": "",
             "Vertical Guidance": "",
             "Horizontal Guidance": "",
-            Stabilizer: "",
           },
           "Armaments"
         )}
@@ -228,20 +225,12 @@ export default function AdminForm() {
           [
             "Name",
             "Type",
-            "Velocity",
-            "Penetration",
-            "Mass",
-            "Explosive Mass",
-            "TNT Equivalent",
+            "Caliber",
           ],
           {
             Name: "",
             Type: "",
-            Velocity: "",
-            Penetration: "",
-            Mass: "",
-            "Explosive Mass": "",
-            "TNT Equivalent": "",
+            Caliber: "",
           },
           "Ammunition"
         )}
