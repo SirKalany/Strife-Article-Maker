@@ -42,7 +42,6 @@ export default function AirForm() {
   ]);
 
   const [dimensions, setDimensions] = useState<InfoField[]>([
-    { label: "Mass", value: "" },
     { label: "Crew", value: "" },
     { label: "Length", value: "" },
     { label: "Wingspan", value: "" },
@@ -52,6 +51,7 @@ export default function AirForm() {
     { label: "Loaded Weight", value: "" },
     { label: "Hardpoints", value: "" },
     { label: "Max Takeoff Weight", value: "" },
+    { label: "Max Hardpoints Weight", value: "" },
   ]);
 
   const [internalArmaments, setInternalArmaments] = useState<
