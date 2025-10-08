@@ -27,15 +27,15 @@ export default function HeavyForm() {
     { label: "Width", value: "" },
     { label: "Height", value: "" },
     { label: "Mass", value: "" },
-    { label: "Crew", value: "" },
   ]);
 
   const [performances, setPerformances] = useState<InfoField[]>([
     { label: "Elevation", value: "" },
     { label: "Traverse", value: "" },
-    { label: "Rate of Fire", value: "" },
-    { label: "Muzzle Velocity", value: "" },
+    { label: "Average Rate of Fire", value: "" },
+    { label: "Maximum Rate of Fire", value: "" },
     { label: "Maximum Range", value: "" },
+    { label: "Crew", value: "" },
   ]);
 
   // === Bloc modulaire ===
