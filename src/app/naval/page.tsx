@@ -3,20 +3,9 @@
 import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
-type Sensor = { Name: string; Type: string; Role: string };
-type Armament = {
-  Name: string;
-  Category: string;
-  Ammunition: string;
-};
-type Ammunition = {
-  Name: string;
-  Type: string;
-  Caliber?: string;
-};
 
 export default function NavalForm() {
-  // === Fixed blocks ===
+  // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
     { label: "Type", value: "" },
@@ -45,7 +34,13 @@ export default function NavalForm() {
   const [automotive, setAutomotive] = useState<InfoField[]>([
     { label: "Installed Power", value: "" },
     { label: "Propulsion", value: "" },
+    { label: "Fuel Type", value: "" },
+    { label: "Fuel Capacity", value: "" },
   ]);
+
+  const [sensors, setSensors] = useState<
+    { Name: string; Type: string; Functions: string }[]
+  >([]);
 
   const [aviationFacilities, setAviationFacilities] = useState<InfoField[]>([
     { label: "Facilities", value: "" },
@@ -53,16 +48,17 @@ export default function NavalForm() {
   ]);
 
   const [performances, setPerformances] = useState<InfoField[]>([
-    { label: "Speed", value: "" },
+    { label: "Maximum Speed", value: "" },
     { label: "Range", value: "" },
   ]);
 
-  // === Modular blocks ===
-  const [sensors, setSensors] = useState<Sensor[]>([]);
-  const [armaments, setArmaments] = useState<Armament[]>([]);
-  const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
+  // === Armament categories ===
+  const [guns, setGuns] = useState<any[]>([]);
+  const [rockets, setRockets] = useState<any[]>([]);
+  const [missiles, setMissiles] = useState<any[]>([]);
+  const [others, setOthers] = useState<any[]>([]);
 
-  // === Render helpers ===
+  // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
@@ -89,7 +85,6 @@ export default function NavalForm() {
     emptyTemplate: any,
     title: string
   ) => {
-    const baseLabel = title.endsWith("s") ? title.slice(0, -1) : title;
     return (
       <>
         {list.map((item, idx) => (
@@ -99,7 +94,7 @@ export default function NavalForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${baseLabel} ${idx + 1}`}
+                {item.Name || `${title.slice(0, -1)} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -109,6 +104,7 @@ export default function NavalForm() {
                 Remove
               </button>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {fields.map((field) => (
                 <div key={field}>
@@ -128,26 +124,32 @@ export default function NavalForm() {
             </div>
           </div>
         ))}
+
         <button
           type="button"
           onClick={() => setter([...list, emptyTemplate])}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
         >
-          Add {baseLabel}
+          Add {title.slice(0, -1)}
         </button>
       </>
     );
   };
 
+  // === Export ===
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
-      "SENSORS & SYSTEMS": sensors,
-      ARMAMENT: armaments,
-      "AVAILABLE AMMUNITION": ammunitions,
+      ARMAMENT: {
+        Guns: guns,
+        Rockets: rockets,
+        Missiles: missiles,
+        Others: others,
+      },
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
+      SENSORS: sensors,
       "AVIATION FACILITIES": Object.fromEntries(
         aviationFacilities.map((i) => [i.label, i.value])
       ),
@@ -155,14 +157,52 @@ export default function NavalForm() {
         performances.map((i) => [i.label, i.value])
       ),
     };
+
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
   };
 
+  // === Field presets ===
+  const gunFields = [
+    "Name",
+    "Type",
+    "Caliber",
+    "Reserve",
+    "Muzzle Velocity",
+    "Rate Of Fire",
+    "Effective Range",
+    "Feed System",
+  ];
+
+  const rocketFields = [
+    "Name",
+    "Type",
+    "Launcher",
+    "Caliber",
+    "Mass",
+    "Explosive Mass",
+    "Explosive Type",
+  ];
+
+  const missileFields = [
+    "Name",
+    "Type",
+    "Launcher",
+    "Mass",
+    "Guidance",
+    "Operational Range",
+    "Explosive Mass",
+    "Explosive Type",
+  ];
+
+  const otherFields = ["Name", "Type", "Role"];
+
+  // === Render ===
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto text-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Naval Form</h1>
 
+      {/* Basic sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Informations</h2>
         {renderFields(infos, setInfos)}
@@ -173,39 +213,32 @@ export default function NavalForm() {
         {renderFields(dimensions, setDimensions)}
       </section>
 
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Sensors & Systems</h2>
-        {renderList(
-          sensors,
-          setSensors,
-          ["Name", "Type", "Role"],
-          { Name: "", Type: "", Role: "" },
-          "Sensors"
-        )}
+      {/* Unified Armament Section */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700 space-y-6">
+        <h2 className="text-lg font-semibold mb-2 text-green-400">Armament</h2>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Guns</h3>
+          {renderList(guns, setGuns, gunFields, {}, "Guns")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Rockets</h3>
+          {renderList(rockets, setRockets, rocketFields, {}, "Rockets")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Missiles</h3>
+          {renderList(missiles, setMissiles, missileFields, {}, "Missiles")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Others</h3>
+          {renderList(others, setOthers, otherFields, {}, "Others")}
+        </div>
       </section>
 
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Armaments</h2>
-        {renderList(
-          armaments,
-          setArmaments,
-          ["Name", "Category", "Ammunition"],
-          { Name: "", Category: "", Ammunition: "" },
-          "Armaments"
-        )}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Ammunition</h2>
-        {renderList(
-          ammunitions,
-          setAmmunitions,
-          ["Name", "Type", "Caliber"],
-          { Name: "", Type: "", Caliber: "" },
-          "Ammunition"
-        )}
-      </section>
-
+      {/* Remaining sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Protection</h2>
         {renderFields(protection, setProtection)}
@@ -214,6 +247,17 @@ export default function NavalForm() {
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Automotive</h2>
         {renderFields(automotive, setAutomotive)}
+      </section>
+
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2">Sensors</h2>
+        {renderList(
+          sensors,
+          setSensors,
+          ["Name", "Type", "Functions"],
+          { Name: "", Type: "", Functions: "" },
+          "Sensors"
+        )}
       </section>
 
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">

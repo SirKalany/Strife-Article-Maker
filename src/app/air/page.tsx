@@ -4,32 +4,6 @@ import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
 
-type InternalArmament = {
-  Name: string;
-  Ammunition?: string;
-  RateOfFire?: string;
-  EffectiveRange?: string;
-  FeedSystem?: string;
-};
-
-type Ammunition = {
-  Name: string;
-  Type: string;
-  Caliber?: string;
-};
-
-type HardpointAmmo = {
-  Name: string;
-  Type: string;
-  Mass?: string;
-};
-
-type Avionic = {
-  Name: string;
-  Type: string;
-  Functions?: string;
-};
-
 export default function AirForm() {
   // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
@@ -54,16 +28,6 @@ export default function AirForm() {
     { label: "Max Hardpoints Weight", value: "" },
   ]);
 
-  const [internalArmaments, setInternalArmaments] = useState<
-    InternalArmament[]
-  >([]);
-  const [internalAmmunitions, setInternalAmmunitions] = useState<Ammunition[]>(
-    []
-  );
-  const [hardpointAmmunitions, setHardpointAmmunitions] = useState<
-    HardpointAmmo[]
-  >([]);
-
   const [protection, setProtection] = useState<InfoField[]>([
     { label: "Armor", value: "" },
     { label: "Countermeasures", value: "" },
@@ -76,7 +40,10 @@ export default function AirForm() {
     { label: "Fuel Capacity", value: "" },
   ]);
 
-  const [avionics, setAvionics] = useState<Avionic[]>([]);
+  const [avionics, setAvionics] = useState<
+    { Name: string; Type: string; Functions: string }[]
+  >([]);
+
   const [performances, setPerformances] = useState<InfoField[]>([
     { label: "Combat Range", value: "" },
     { label: "Ferry Range", value: "" },
@@ -86,7 +53,14 @@ export default function AirForm() {
     { label: "Maximum Speed High Altitude", value: "" },
   ]);
 
-  // === Helpers ===
+  // === Armament categories ===
+  const [guns, setGuns] = useState<any[]>([]);
+  const [rockets, setRockets] = useState<any[]>([]);
+  const [missiles, setMissiles] = useState<any[]>([]);
+  const [bombs, setBombs] = useState<any[]>([]);
+  const [others, setOthers] = useState<any[]>([]);
+
+  // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
@@ -113,8 +87,6 @@ export default function AirForm() {
     emptyTemplate: any,
     title: string
   ) => {
-    const baseLabel = title.endsWith("s") ? title.slice(0, -1) : title;
-
     return (
       <>
         {list.map((item, idx) => (
@@ -124,7 +96,7 @@ export default function AirForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${baseLabel} ${idx + 1}`}
+                {item.Name || `${title.slice(0, -1)} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -160,19 +132,24 @@ export default function AirForm() {
           onClick={() => setter([...list, emptyTemplate])}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
         >
-          Add {baseLabel}
+          Add {title.slice(0, -1)}
         </button>
       </>
     );
   };
 
+  // === Export ===
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
-      "INTERNAL ARMAMENT": internalArmaments,
-      "AVAILABLE INTERNAL AMMUNITION": internalAmmunitions,
-      "AVAILABLE HARDPOINTS AMMUNITION": hardpointAmmunitions,
+      ARMAMENT: {
+        Guns: guns,
+        Rockets: rockets,
+        Missiles: missiles,
+        Bombs: bombs,
+        Others: others,
+      },
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
       AVIONICS: avionics,
@@ -180,14 +157,63 @@ export default function AirForm() {
         performances.map((i) => [i.label, i.value])
       ),
     };
+
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
   };
 
+  // === Field presets ===
+  const gunFields = [
+    "Name",
+    "Type",
+    "Caliber",
+    "Reserve",
+    "Muzzle Velocity",
+    "Rate Of Fire",
+    "Effective Range",
+    "Feed System",
+  ];
+
+  const rocketFields = [
+    "Name",
+    "Type",
+    "Caliber",
+    "Mass",
+    "Explosive Mass",
+    "Explosive Type",
+  ];
+
+  const missileFields = [
+    "Name",
+    "Type",
+    "Mass",
+    "Guidance",
+    "Launch Range",
+    "Lock Range",
+    "Maximum Speed",
+    "Massive Overload",
+    "Missile Guidance Time",
+    "Explosive Mass",
+    "Explosive Type",
+  ];
+
+  const bombFields = [
+    "Name",
+    "Type",
+    "Mass",
+    "Guidance",
+    "Explosive Mass",
+    "Explosive Type",
+  ];
+
+  const otherFields = ["Name", "Type", "Role"];
+
+  // === Render ===
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto text-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Air Form</h1>
 
+      {/* Basic sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Informations</h2>
         {renderFields(infos, setInfos)}
@@ -198,63 +224,37 @@ export default function AirForm() {
         {renderFields(dimensions, setDimensions)}
       </section>
 
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Internal Armament</h2>
-        {renderList(
-          internalArmaments,
-          setInternalArmaments,
-          [
-            "Name",
-            "Ammunition",
-            "Rate Of Fire",
-            "Effective Range",
-            "Feed System",
-          ],
-          {
-            Name: "",
-            Ammunition: "",
-            "Rate Of Fire": "",
-            "Effective Range": "",
-            "Feed System": "",
-          },
-          "Internal Armaments"
-        )}
+      {/* Unified Armament Section */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700 space-y-6">
+        <h2 className="text-lg font-semibold mb-2 text-green-400">Armament</h2>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Guns</h3>
+          {renderList(guns, setGuns, gunFields, {}, "Guns")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Rockets</h3>
+          {renderList(rockets, setRockets, rocketFields, {}, "Rockets")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Missiles</h3>
+          {renderList(missiles, setMissiles, missileFields, {}, "Missiles")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Bombs</h3>
+          {renderList(bombs, setBombs, bombFields, {}, "Bombs")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Others</h3>
+          {renderList(others, setOthers, otherFields, {}, "Others")}
+        </div>
       </section>
 
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">
-          Available Internal Ammunition
-        </h2>
-        {renderList(
-          internalAmmunitions,
-          setInternalAmmunitions,
-          ["Name", "Type", "Caliber"],
-          {
-            Name: "",
-            Type: "",
-            Caliber: "",
-          },
-          "Internal Ammunitions"
-        )}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">
-          Available Hardpoints Ammunition
-        </h2>
-        {renderList(
-          hardpointAmmunitions,
-          setHardpointAmmunitions,
-          ["Name", "Type", "Mass"],
-          {
-            Name: "",
-            Type: "",
-            Mass: "",
-          },
-          "Hardpoints Ammunitions"
-        )}
-      </section>
-
+      {/* Remaining sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Protection</h2>
         {renderFields(protection, setProtection)}
@@ -271,7 +271,7 @@ export default function AirForm() {
           avionics,
           setAvionics,
           ["Name", "Type", "Functions"],
-          { Name: "", Type: "", Functions: ""},
+          { Name: "", Type: "", Functions: "" },
           "Avionics"
         )}
       </section>
