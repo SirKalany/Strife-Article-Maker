@@ -5,6 +5,7 @@ import React, { useState } from "react";
 type InfoField = { label: string; value: string };
 
 export default function InfantryForm() {
+  // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
     { label: "Type", value: "" },

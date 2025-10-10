@@ -3,14 +3,9 @@
 import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
-type Ammunition = {
-  Name: string;
-  Type: string;
-  Caliber?: string;
-};
 
 export default function HeavyForm() {
-  // === Sections d'infos fixes ===
+  // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
     { label: "Type", value: "" },
@@ -27,6 +22,8 @@ export default function HeavyForm() {
     { label: "Width", value: "" },
     { label: "Height", value: "" },
     { label: "Mass", value: "" },
+    { label: "Breech", value: "" },
+    { label: "Recoil", value: "" },
   ]);
 
   const [performances, setPerformances] = useState<InfoField[]>([
@@ -37,9 +34,6 @@ export default function HeavyForm() {
     { label: "Maximum Range", value: "" },
     { label: "Crew", value: "" },
   ]);
-
-  // === Bloc modulaire ===
-  const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
 
   // === Render Helpers ===
   const renderFields = (fields: InfoField[], setter: any) =>
@@ -129,7 +123,6 @@ export default function HeavyForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
-      "AVAILABLE AMMUNITION": ammunitions,
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
@@ -155,25 +148,6 @@ export default function HeavyForm() {
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Ammunition</h2>
-        {renderList(
-          ammunitions,
-          setAmmunitions,
-          [
-            "Name",
-            "Type",
-            "Caliber",
-          ],
-          {
-            Name: "",
-            Type: "",
-            Caliber: "",
-          },
-          "Ammunitions"
-        )}
       </section>
 
       <div className="text-center mt-6">

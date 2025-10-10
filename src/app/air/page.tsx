@@ -20,6 +20,8 @@ export default function AirForm() {
     { label: "Length", value: "" },
     { label: "Wingspan", value: "" },
     { label: "Wing Area", value: "" },
+    { label: "Main Rotor Diameter", value: "" },
+    { label: "Main Rotor Area", value: "" },
     { label: "Height", value: "" },
     { label: "Empty Weight", value: "" },
     { label: "Loaded Weight", value: "" },

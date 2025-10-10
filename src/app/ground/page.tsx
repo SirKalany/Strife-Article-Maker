@@ -3,23 +3,8 @@
 import React, { useState } from "react";
 
 type InfoField = { label: string; value: string };
-type Sensor = { Name: string; Type: string; Purpose: string };
-type Armament = {
-  Name: string;
-  Catagory: string;
-  Mount?: string;
-  Ammunition: string;
-  "Rate of Fire": string;
-  "Vertical Guidance"?: string;
-  "Horizontal Guidance"?: string;
-};
-type Ammunition = {
-  Name: string;
-  Type: string;
-  Caliber: string;
-};
 
-export default function AdminForm() {
+export default function GroundForm() {
   // === State for each block ===
   const [infos, setInfos] = useState<InfoField[]>([
     { label: "Name", value: "" },
@@ -41,15 +26,17 @@ export default function AdminForm() {
     { label: "Height", value: "" },
   ]);
 
-  const [sensors, setSensors] = useState<Sensor[]>([]);
-  const [armaments, setArmaments] = useState<Armament[]>([]);
-  const [ammunitions, setAmmunitions] = useState<Ammunition[]>([]);
+  const [sensors, setSensors] = useState<
+    { Name: string; Type: string; Purpose: string }[]
+  >([]);
+
   const [protection, setProtection] = useState<InfoField[]>([
     { label: "Armor", value: "" },
     { label: "Appliqué Armor", value: "" },
     { label: "Passive Protection Devices", value: "" },
     { label: "Active Protection Devices", value: "" },
   ]);
+
   const [automotive, setAutomotive] = useState<InfoField[]>([
     { label: "Engine", value: "" },
     { label: "Horsepower", value: "" },
@@ -60,6 +47,7 @@ export default function AdminForm() {
     { label: "Fuel Type", value: "" },
     { label: "Fuel Capacity", value: "" },
   ]);
+
   const [performances, setPerformances] = useState<InfoField[]>([
     { label: "Operational Range", value: "" },
     { label: "On Road Speed", value: "" },
@@ -67,7 +55,13 @@ export default function AdminForm() {
     { label: "Amphibious", value: "" },
   ]);
 
-  // === Render Helpers ===
+  // === Armament categories ===
+  const [guns, setGuns] = useState<any[]>([]);
+  const [rockets, setRockets] = useState<any[]>([]);
+  const [missiles, setMissiles] = useState<any[]>([]);
+  const [others, setOthers] = useState<any[]>([]);
+
+  // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
@@ -94,8 +88,6 @@ export default function AdminForm() {
     emptyTemplate: any,
     title: string
   ) => {
-    const baseLabel = title.endsWith("s") ? title.slice(0, -1) : title;
-
     return (
       <>
         {list.map((item, idx) => (
@@ -105,7 +97,7 @@ export default function AdminForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${baseLabel} ${idx + 1}`}
+                {item.Name || `${title.slice(0, -1)} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -141,34 +133,80 @@ export default function AdminForm() {
           onClick={() => setter([...list, emptyTemplate])}
           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
         >
-          Add {baseLabel}
+          Add {title.slice(0, -1)}
         </button>
       </>
     );
   };
 
+  // === Export ===
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
       DIMENSIONS: Object.fromEntries(dimensions.map((i) => [i.label, i.value])),
       SENSORS: sensors,
-      ARMAMENT: armaments,
-      "AVAILABLE AMMUNITION": ammunitions,
+      ARMAMENT: {
+        Guns: guns,
+        Rockets: rockets,
+        Missiles: missiles,
+        Others: others,
+      },
       PROTECTION: Object.fromEntries(protection.map((i) => [i.label, i.value])),
       AUTOMOTIVE: Object.fromEntries(automotive.map((i) => [i.label, i.value])),
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
     };
+
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
   };
 
+  // === Field presets ===
+  const gunFields = [
+    "Name",
+    "Type",
+    "Caliber",
+    "Reserve",
+    "Muzzle Velocity",
+    "Rate of Fire",
+    "Effective Range",
+    "Feed System",
+    "Vertical Guidance",
+    "Horizontal Guidance",
+  ];
+
+  const rocketFields = [
+    "Name",
+    "Type",
+    "Caliber",
+    "Mass",
+    "Explosive Mass",
+    "Explosive Type",
+    "Vertical Guidance",
+    "Horizontal Guidance",
+  ];
+
+  const missileFields = [
+    "Name",
+    "Type",
+    "Mass",
+    "Guidance",
+    "Operational Range",
+    "Explosive Mass",
+    "Explosive Type",
+    "Vertical Guidance",
+    "Horizontal Guidance",
+  ];
+
+  const otherFields = ["Name", "Type", "Role"];
+
+  // === Render ===
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto text-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Ground Form</h1>
 
-      {/* Blocks */}
+      {/* Basic sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Informations</h2>
         {renderFields(infos, setInfos)}
@@ -179,6 +217,32 @@ export default function AdminForm() {
         {renderFields(dimensions, setDimensions)}
       </section>
 
+      {/* Unified Armament Section */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700 space-y-6">
+        <h2 className="text-lg font-semibold mb-2 text-green-400">Armament</h2>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Guns</h3>
+          {renderList(guns, setGuns, gunFields, {}, "Guns")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Rockets</h3>
+          {renderList(rockets, setRockets, rocketFields, {}, "Rockets")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Missiles</h3>
+          {renderList(missiles, setMissiles, missileFields, {}, "Missiles")}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2 text-blue-400">Others</h3>
+          {renderList(others, setOthers, otherFields, {}, "Others")}
+        </div>
+      </section>
+
+      {/* Remaining sections */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Sensors & Electronics</h2>
         {renderList(
@@ -187,52 +251,6 @@ export default function AdminForm() {
           ["Name", "Type", "Purpose"],
           { Name: "", Type: "", Purpose: "" },
           "Sensors"
-        )}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Armaments</h2>
-        {renderList(
-          armaments,
-          setArmaments,
-          [
-            "Name",
-            "Category",
-            "Mount",
-            "Ammunition",
-            "Rate of Fire",
-            "Vertical Guidance",
-            "Horizontal Guidance",
-          ],
-          {
-            Name: "",
-            Category: "",
-            Mount: "",
-            Ammunition: "",
-            "Rate of Fire": "",
-            "Vertical Guidance": "",
-            "Horizontal Guidance": "",
-          },
-          "Armaments"
-        )}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Available Ammunition</h2>
-        {renderList(
-          ammunitions,
-          setAmmunitions,
-          [
-            "Name",
-            "Type",
-            "Caliber",
-          ],
-          {
-            Name: "",
-            Type: "",
-            Caliber: "",
-          },
-          "Ammunition"
         )}
       </section>
 
