@@ -35,6 +35,11 @@ export default function HeavyForm() {
     { label: "Crew", value: "" },
   ]);
 
+  // === Users ===
+  const [users, setUsers] = useState<
+    { Country: string; Description: string }[]
+  >([]);
+
   // === Render Helpers ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
@@ -73,7 +78,7 @@ export default function HeavyForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${baseLabel} ${idx + 1}`}
+                {item.Name || item.Country || `${baseLabel} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -123,6 +128,7 @@ export default function HeavyForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
+      USERS: users,
     };
     console.log(JSON.stringify(json, null, 2));
     alert("Check console for JSON output!");
@@ -148,6 +154,18 @@ export default function HeavyForm() {
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
+      </section>
+
+      {/* === Users Section === */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2 text-yellow-400">Users</h2>
+        {renderList(
+          users,
+          setUsers,
+          ["Country", "Description"],
+          { Country: "", Description: "" },
+          "Users"
+        )}
       </section>
 
       <div className="text-center mt-6">

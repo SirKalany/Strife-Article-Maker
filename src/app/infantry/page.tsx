@@ -33,6 +33,12 @@ export default function InfantryForm() {
     { label: "Firing Range", value: "" },
   ]);
 
+  // === Users ===
+  const [users, setUsers] = useState<
+    { Country: string; Description: string }[]
+  >([]);
+
+  // === Render Helpers ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
       <div key={idx} className="mb-2">
@@ -44,7 +50,7 @@ export default function InfantryForm() {
           value={field.value}
           onChange={(e) => {
             const copy = [...fields];
-            copy[idx] = { ...copy[idx], value: e.target.value };
+            copy[idx].value = e.target.value;
             setter(copy);
           }}
           className="border rounded p-2 w-full bg-gray-900 text-gray-100 border-gray-700"
@@ -52,6 +58,67 @@ export default function InfantryForm() {
       </div>
     ));
 
+  const renderList = (
+    list: any[],
+    setter: any,
+    fields: string[],
+    emptyTemplate: any,
+    title: string
+  ) => {
+    const baseLabel = title.endsWith("s") ? title.slice(0, -1) : title;
+
+    return (
+      <>
+        {list.map((item, idx) => (
+          <div
+            key={idx}
+            className="border rounded p-3 mb-3 relative bg-gray-900 border-gray-700"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-sm font-semibold text-gray-200">
+                {item.Name || item.Country || `${baseLabel} ${idx + 1}`}
+              </div>
+              <button
+                type="button"
+                onClick={() => setter(list.filter((_, i) => i !== idx))}
+                className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+              >
+                Remove
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {fields.map((field) => (
+                <div key={field}>
+                  <label className="block text-xs text-gray-300">{field}</label>
+                  <input
+                    type="text"
+                    value={item[field] || ""}
+                    onChange={(e) => {
+                      const copy = [...list];
+                      copy[idx][field] = e.target.value;
+                      setter(copy);
+                    }}
+                    className="border rounded p-1 w-full bg-gray-800 text-gray-100 border-gray-700"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => setter([...list, emptyTemplate])}
+          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+        >
+          Add {baseLabel}
+        </button>
+      </>
+    );
+  };
+
+  // === Export JSON ===
   const exportJSON = () => {
     const json = {
       INFORMATIONS: Object.fromEntries(infos.map((i) => [i.label, i.value])),
@@ -60,11 +127,13 @@ export default function InfantryForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
+      USERS: users,
     };
     console.log(JSON.stringify(json, null, 2));
-    alert("JSON printed to console (and copied to clipboard when possible).");
+    alert("Check console for JSON output!");
   };
 
+  // === Render global ===
   return (
     <div className="p-8 space-y-6 max-w-4xl mx-auto text-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Infantry Form</h1>
@@ -87,6 +156,18 @@ export default function InfantryForm() {
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
+      </section>
+
+      {/* === Users Section === */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2 text-yellow-400">Users</h2>
+        {renderList(
+          users,
+          setUsers,
+          ["Country", "Description"],
+          { Country: "", Description: "" },
+          "Users"
+        )}
       </section>
 
       <div className="text-center mt-6">

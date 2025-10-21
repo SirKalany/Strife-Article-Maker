@@ -58,6 +58,11 @@ export default function NavalForm() {
   const [missiles, setMissiles] = useState<any[]>([]);
   const [others, setOthers] = useState<any[]>([]);
 
+  // === Users ===
+  const [users, setUsers] = useState<
+    { Country: string; Description: string }[]
+  >([]);
+
   // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
@@ -94,7 +99,9 @@ export default function NavalForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${title.slice(0, -1)} ${idx + 1}`}
+                {item.Name ||
+                  item.Country ||
+                  `${title.slice(0, -1)} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -156,6 +163,7 @@ export default function NavalForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
+      USERS: users,
     };
 
     console.log(JSON.stringify(json, null, 2));
@@ -169,7 +177,7 @@ export default function NavalForm() {
     "Caliber",
     "Reserve",
     "Muzzle Velocity",
-    "Rate Of Fire",
+    "Rate of Fire",
     "Effective Range",
     "Feed System",
   ];
@@ -196,6 +204,7 @@ export default function NavalForm() {
   ];
 
   const otherFields = ["Name", "Type", "Role"];
+  const userFields = ["Country", "Description"];
 
   // === Render ===
   return (
@@ -213,7 +222,7 @@ export default function NavalForm() {
         {renderFields(dimensions, setDimensions)}
       </section>
 
-      {/* Unified Armament Section */}
+      {/* Armament */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700 space-y-6">
         <h2 className="text-lg font-semibold mb-2 text-green-400">Armament</h2>
 
@@ -238,17 +247,7 @@ export default function NavalForm() {
         </div>
       </section>
 
-      {/* Remaining sections */}
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Protection</h2>
-        {renderFields(protection, setProtection)}
-      </section>
-
-      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
-        <h2 className="text-lg font-semibold mb-2">Automotive</h2>
-        {renderFields(automotive, setAutomotive)}
-      </section>
-
+      {/* Sensors */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Sensors</h2>
         {renderList(
@@ -260,16 +259,43 @@ export default function NavalForm() {
         )}
       </section>
 
+      {/* Protection */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2">Protection</h2>
+        {renderFields(protection, setProtection)}
+      </section>
+
+      {/* Automotive */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2">Automotive</h2>
+        {renderFields(automotive, setAutomotive)}
+      </section>
+
+      {/* Aviation Facilities */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Aviation Facilities</h2>
         {renderFields(aviationFacilities, setAviationFacilities)}
       </section>
 
+      {/* Performances */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
       </section>
 
+      {/* Users */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2 text-yellow-400">Users</h2>
+        {renderList(
+          users,
+          setUsers,
+          userFields,
+          { Country: "", Description: "" },
+          "Users"
+        )}
+      </section>
+
+      {/* Export */}
       <div className="text-center mt-6">
         <button
           type="button"

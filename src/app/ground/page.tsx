@@ -61,6 +61,11 @@ export default function GroundForm() {
   const [missiles, setMissiles] = useState<any[]>([]);
   const [others, setOthers] = useState<any[]>([]);
 
+  // === Users ===
+  const [users, setUsers] = useState<
+    { Country: string; Description: string }[]
+  >([]);
+
   // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
@@ -97,7 +102,9 @@ export default function GroundForm() {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-semibold text-gray-200">
-                {item.Name || `${title.slice(0, -1)} ${idx + 1}`}
+                {item.Name ||
+                  item.Country ||
+                  `${title.slice(0, -1)} ${idx + 1}`}
               </div>
               <button
                 type="button"
@@ -156,6 +163,7 @@ export default function GroundForm() {
       PERFORMANCES: Object.fromEntries(
         performances.map((i) => [i.label, i.value])
       ),
+      USERS: users,
     };
 
     console.log(JSON.stringify(json, null, 2));
@@ -200,6 +208,7 @@ export default function GroundForm() {
   ];
 
   const otherFields = ["Name", "Type", "Role"];
+  const userFields = ["Country", "Description"];
 
   // === Render ===
   return (
@@ -217,7 +226,7 @@ export default function GroundForm() {
         {renderFields(dimensions, setDimensions)}
       </section>
 
-      {/* Unified Armament Section */}
+      {/* Armament */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700 space-y-6">
         <h2 className="text-lg font-semibold mb-2 text-green-400">Armament</h2>
 
@@ -242,7 +251,7 @@ export default function GroundForm() {
         </div>
       </section>
 
-      {/* Remaining sections */}
+      {/* Sensors */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Sensors & Electronics</h2>
         {renderList(
@@ -254,21 +263,37 @@ export default function GroundForm() {
         )}
       </section>
 
+      {/* Protection */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Protection</h2>
         {renderFields(protection, setProtection)}
       </section>
 
+      {/* Automotive */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Automotive</h2>
         {renderFields(automotive, setAutomotive)}
       </section>
 
+      {/* Performances */}
       <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
         <h2 className="text-lg font-semibold mb-2">Performances</h2>
         {renderFields(performances, setPerformances)}
       </section>
 
+      {/* Users */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2 text-yellow-400">Users</h2>
+        {renderList(
+          users,
+          setUsers,
+          userFields,
+          { Country: "", Description: "" },
+          "Users"
+        )}
+      </section>
+
+      {/* Export */}
       <div className="text-center mt-6">
         <button
           type="button"
