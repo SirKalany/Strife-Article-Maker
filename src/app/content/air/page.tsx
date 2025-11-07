@@ -67,6 +67,9 @@ export default function AirForm() {
     { Country: string; Description: string }[]
   >([]);
 
+  // === Service ===
+  const [service, setService] = useState<string>("");
+
   // === Helper: generic input fields ===
   const renderFields = (fields: InfoField[], setter: any) =>
     fields.map((field, idx) => (
@@ -166,6 +169,7 @@ export default function AirForm() {
         performances.map((i) => [i.label, i.value])
       ),
       USERS: users,
+      SERVICE: service,
     };
 
     console.log(JSON.stringify(json, null, 2));
@@ -305,6 +309,17 @@ export default function AirForm() {
           { Country: "", Description: "" },
           "Users"
         )}
+      </section>
+
+      {/* Service */}
+      <section className="border rounded p-4 bg-[#0f1720] border-gray-700">
+        <h2 className="text-lg font-semibold mb-2 text-purple-400">Service</h2>
+        <textarea
+          value={service}
+          onChange={(e) => setService(e.target.value)}
+          placeholder="Write a detailed service history or paragraph..."
+          className="w-full h-40 bg-gray-900 text-gray-100 border border-gray-700 rounded p-3 resize-y"
+        />
       </section>
 
       {/* Export */}
